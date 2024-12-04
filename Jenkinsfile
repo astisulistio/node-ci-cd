@@ -1,4 +1,3 @@
-// Pipeline untuk build, test, dan deploy aplikasi Node.js
 pipeline {
     agent any
     environment {
@@ -14,13 +13,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                powershell '''
+                    # Check if Node.js and npm are installed
+                    node --version
+                    npm --version
+                    # Install npm dependencies
+                    npm install
+                '''
             }
         }
 
         stage('Run Unit Tests') {
             steps {
-                sh 'npm test'
+                powershell 'npm test'
             }
         }
 
