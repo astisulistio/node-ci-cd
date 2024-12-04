@@ -1,3 +1,4 @@
+// Pipeline untuk build, test, dan deploy aplikasi Node.js
 pipeline {
     agent any
     environment {
