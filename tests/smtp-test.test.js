@@ -1,11 +1,11 @@
-// smtp-test.test.js
-const nodemailer = require('nodemailer');
-
 test('SMTP email sending', async () => {
+  console.log('Running SMTP email test...');
+  const nodemailer = require('nodemailer');
+
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
-    secure: false, // Use 'true' for port 465
+    secure: false,
     auth: {
       user: '2200016116@webmail.uad.ac.id',
       pass: 'isbt nvcv ztjn lpin', // Replace with actual credentials
@@ -23,6 +23,5 @@ test('SMTP email sending', async () => {
   const info = await transporter.sendMail(mailOptions);
   console.log('Email sent:', info.response);
 
-  // You can optionally add an assertion
   expect(info.response).toContain('250');
 });

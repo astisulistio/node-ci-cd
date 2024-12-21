@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_ENV = 'development'  // Default environment
+        NODE_ENV = 'development'
         APP_NAME = 'node-ci-cd'
         TEST_REPORT_DIR = 'test-reports'
     }
@@ -15,14 +15,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Check if BRANCH_NAME is null or empty and set a default branch
                     if (env.BRANCH_NAME == null || env.BRANCH_NAME == '') {
                         echo "Branch name not found, defaulting to 'main'"
-                        env.BRANCH_NAME = 'main'  // Default branch (change to your default branch if needed)
+                        env.BRANCH_NAME = 'main'  // Default branch
                     }
                     echo "Running on branch: ${env.BRANCH_NAME}"
 
-                    // Checkout from the correct GitHub branch
+                    // Checkout the correct branch
                     git branch: "${env.BRANCH_NAME}", url: 'https://github.com/astisulistio/node-ci-cd.git'
                 }
             }
@@ -36,7 +35,7 @@ pipeline {
 
         stage('Run Unit Tests') {
             steps {
-                bat 'npm test'  // Runs Jest without additional reporter options
+                bat 'npm test'  // Runs Jest for all unit tests
             }
         }
 
@@ -44,7 +43,12 @@ pipeline {
             steps {
                 script {
                     echo "Running Integration Tests"
-                    // Make sure we are running the test from the correct path
+                    // Log the current working directory to verify paths
+                    echo "Current directory: ${pwd()}"
+                    echo "Files in the current directory:"
+                    bat 'dir'
+
+                    // Run the specific test file
                     bat 'npx jest tests/smtp-test.test.js --verbose --maxWorkers=2'  // Correct path to the test file
                 }
             }
@@ -59,7 +63,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Deploy based on DEPLOY_ENV parameter
                     if (params.DEPLOY_ENV == 'staging') {
                         echo "Deploying to Staging"
                         bat 'npm run deploy-staging'

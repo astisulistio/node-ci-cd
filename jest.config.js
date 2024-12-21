@@ -1,11 +1,12 @@
 module.exports = {
+    testEnvironment: 'node',
+    roots: ['<rootDir>/tests'],  // Make sure Jest looks in the 'tests' folder
     testMatch: [
-      "**/tests/**/*.test.js" 
+      '**/*.test.js',  // Look for files ending in .test.js
     ],
-    testPathIgnorePatterns: [
-      "/node_modules/",  
-      "/dist/",           
-      "/coverage/"        
-    ]
+    transform: {
+      '^.+\\.js$': 'babel-jest',  // Ensure Babel is used to transform JS files
+    },
+    verbose: true,
   };
   
