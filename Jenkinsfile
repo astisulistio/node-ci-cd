@@ -45,7 +45,7 @@ pipeline {
                 script {
                     echo "Running Integration Tests"
                     // Directly run the integration test using Jest for smtp-test.test.js
-                    bat 'npx jest smtp-test.test.js'  // Use the updated file name for the integration test
+                    bat 'npx jest smtp-test.test.js --verbose --maxWorkers=2'  // Use the updated file name for the integration test and added flags for better test execution
                 }
             }
         }

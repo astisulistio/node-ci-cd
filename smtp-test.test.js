@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 
+// Set a custom timeout to avoid Jest's default 5s timeout
 jest.setTimeout(10000); // Set the timeout to 10 seconds (or higher if needed)
 
 test('SMTP email sending', async () => {
@@ -15,7 +16,7 @@ test('SMTP email sending', async () => {
 
   const mailOptions = {
     from: '2200016116@webmail.uad.ac.id',
-    to: 'asti02sulistio@gmail.com',
+    to: 'asti02sulistio@gmail.com', // Replace with a valid recipient
     subject: 'Test Email from Node.js', // Clear subject
     text: 'Hello, this is a test email sent from Node.js script!', // Plain text message
     html: '<p>Hello, this is a <b>test email</b> sent from Node.js script!</p>', // Optional HTML message
@@ -23,4 +24,7 @@ test('SMTP email sending', async () => {
 
   const info = await transporter.sendMail(mailOptions);
   console.log('Email sent:', info.response);
+
+  // Optional: Add assertion to verify the email was successfully sent
+  expect(info.response).toMatch(/250/);  // Checking the SMTP success response code (250 means OK)
 });
