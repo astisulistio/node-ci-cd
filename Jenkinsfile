@@ -15,13 +15,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Checkout dari repository GitHub
-                    if (env.BRANCH_NAME == 'feature/update-jenkinsfile') {
-                        echo "Running on feature/update-jenkinsfile branch"
-                    } else {
-                        echo "Running on branch: ${env.BRANCH_NAME}"
-                    }
-                    git branch: 'feature/update-jenkinsfile', url: 'https://github.com/astisulistio/node-ci-cd.git'
+                    // Checkout from the correct GitHub branch
+                    echo "Running on branch: ${env.BRANCH_NAME}"
+                    git branch: "${env.BRANCH_NAME}", url: 'https://github.com/astisulistio/node-ci-cd.git'
                 }
             }
         }
@@ -34,7 +30,7 @@ pipeline {
 
         stage('Run Unit Tests') {
             steps {
-                bat 'npm test -- --reporter mocha-multi-reporters --reporter-options configFile=config/test-reporter.json'
+                bat 'npm test'  // Runs Jest without additional reporter options
             }
         }
 
@@ -71,7 +67,7 @@ pipeline {
         stage('Branch-Specific Tests') {
             when {
                 expression {
-                    env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'feature/update-jenkinsfile'
+                    return (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'feature/update-jenkinsfile')
                 }
             }
             steps {
@@ -98,7 +94,7 @@ pipeline {
         stage('Notify on Failure') {
             when {
                 expression {
-                    currentBuild.result == 'FAILURE'
+                    return currentBuild.result == 'FAILURE'
                 }
             }
             steps {
@@ -111,7 +107,7 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            cleanWs() // Clean up the workspace after each build
         }
     }
 }
