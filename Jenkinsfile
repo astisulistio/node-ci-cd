@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     echo "Running Integration Tests"
-                    // Directly run the integration test using Jest for smtp-test.test.js
+                    // Make sure we are running the test from the tests folder
                     bat 'npx jest tests/smtp-test.test.js --verbose --maxWorkers=2'  // Correct path to the test file
                 }
             }
