@@ -42,7 +42,11 @@ pipeline {
 
         stage('Run Integration Tests') {
             steps {
-                bat 'npm run integration-test'
+                script {
+                    echo "Running Integration Tests"
+                    // Run integration test using smtp-test.js
+                    bat 'npm run integration-test'
+                }
             }
         }
 
