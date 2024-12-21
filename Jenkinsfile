@@ -15,10 +15,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Checkout from the correct GitHub branch
-                    echo "Running on branch: ${env.BRANCH_NAME}"
-                    // Ensure correct branch is checked out dynamically
-                    git branch: "${env.BRANCH_NAME}", url: 'https://github.com/astisulistio/node-ci-cd.git'
+                    // Checkout dari repository GitHub
+                    if (env.BRANCH_NAME == 'feature/update-jenkinsfile') {
+                        echo "Running on feature/update-jenkinsfile branch"
+                    } else {
+                        echo "Running on branch: ${env.BRANCH_NAME}"
+                    }
+                    git branch: 'feature/update-jenkinsfile', url: 'https://github.com/astisulistio/node-ci-cd.git'
                 }
             }
         }
@@ -68,7 +71,7 @@ pipeline {
         stage('Branch-Specific Tests') {
             when {
                 expression {
-                    return (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'feature/update-jenkinsfile')
+                    env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'feature/update-jenkinsfile'
                 }
             }
             steps {
@@ -95,7 +98,7 @@ pipeline {
         stage('Notify on Failure') {
             when {
                 expression {
-                    return currentBuild.result == 'FAILURE'
+                    currentBuild.result == 'FAILURE'
                 }
             }
             steps {
@@ -108,7 +111,7 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Clean up the workspace after each build
+            cleanWs()
         }
     }
 }
