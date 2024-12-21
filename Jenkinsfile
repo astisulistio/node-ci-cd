@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_ENV = 'development'
+        NODE_ENV = 'development'  // Default environment
         APP_NAME = 'node-ci-cd'
         TEST_REPORT_DIR = 'test-reports'
     }
@@ -14,7 +14,15 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/astisulistio/node-ci-cd.git'
+                script {
+                    // Checkout dari repository GitHub
+                    if (env.BRANCH_NAME == 'feature/update-jenkinsfile') {
+                        echo "Running on feature/update-jenkinsfile branch"
+                    } else {
+                        echo "Running on branch: ${env.BRANCH_NAME}"
+                    }
+                    git branch: 'feature/update-jenkinsfile', url: 'https://github.com/astisulistio/node-ci-cd.git'
+                }
             }
         }
 
@@ -42,19 +50,28 @@ pipeline {
             }
         }
 
-        stage('Deploy to Staging') {
-            when {
-                branch 'main'
-            }
+        stage('Deploy') {
             steps {
-                bat 'npm run deploy-staging'
+                script {
+                    // Deploy based on DEPLOY_ENV parameter
+                    if (params.DEPLOY_ENV == 'staging') {
+                        echo "Deploying to Staging"
+                        bat 'npm run deploy-staging'
+                    } else if (params.DEPLOY_ENV == 'production') {
+                        echo "Deploying to Production"
+                        bat 'npm run deploy-production'
+                    } else {
+                        echo "Deploying to Development"
+                        bat 'npm run deploy-development'
+                    }
+                }
             }
         }
 
         stage('Branch-Specific Tests') {
             when {
                 expression {
-                    env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main'
+                    env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'feature/update-jenkinsfile'
                 }
             }
             steps {
@@ -63,6 +80,8 @@ pipeline {
                         bat 'npm run test-develop'
                     } else if (env.BRANCH_NAME == 'main') {
                         bat 'npm run test-main'
+                    } else if (env.BRANCH_NAME == 'feature/update-jenkinsfile') {
+                        bat 'npm run test-feature'
                     }
                 }
             }
