@@ -18,16 +18,5 @@
     "express": "^4.21.1",
     "nodemailer": "^6.9.16",
     "supertest": "^7.0.0"
-  },
-  "jest": {
-    "testMatch": [
-      "**/*.test.js", 
-      "**/?(*.)+(spec|test).[tj]s?(x)" 
-    ],
-    "testPathIgnorePatterns": [
-      "\\node_modules\\", 
-      "\\dist\\",  
-      "\\coverage\\"  
-    ]
   }
 }
