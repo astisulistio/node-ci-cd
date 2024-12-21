@@ -15,8 +15,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Checkout from the correct GitHub branch
+                    // Check if BRANCH_NAME is null or empty and set a default branch
+                    if (env.BRANCH_NAME == null || env.BRANCH_NAME == '') {
+                        echo "Branch name not found, defaulting to 'main'"
+                        env.BRANCH_NAME = 'main'  // Default branch (change to your default branch if needed)
+                    }
                     echo "Running on branch: ${env.BRANCH_NAME}"
+                    
+                    // Checkout from the correct GitHub branch
                     git branch: "${env.BRANCH_NAME}", url: 'https://github.com/astisulistio/node-ci-cd.git'
                 }
             }
