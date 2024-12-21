@@ -90,6 +90,7 @@ pipeline {
                     } else if (env.BRANCH_NAME == 'main') {
                         bat 'npm run test-main'
                     } else if (env.BRANCH_NAME == 'feature/update-jenkinsfile') {
+                        echo "Running tests for feature/update-jenkinsfile branch"
                         bat 'npm run test-feature'
                     }
                 }
