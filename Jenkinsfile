@@ -1,55 +1,98 @@
 pipeline {
     agent any
+
     environment {
-        CI = 'true'
+        NODE_ENV = 'development'
+        APP_NAME = 'node-ci-cd'
+        TEST_REPORT_DIR = 'test-reports'
+    }
+
+    parameters {
+        string(name: 'DEPLOY_ENV', defaultValue: 'staging', description: 'Deployment environment')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/astisulistio/node-ci-cd.git'
+                git 'https://github.com/astisulistio/node-ci-cd.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                powershell '''
-                    # Check if Node.js and npm are installed
-                    node --version
-                    npm --version
-                    # Install npm dependencies
-                    npm install
-                '''
+                bat 'npm install'
             }
         }
 
         stage('Run Unit Tests') {
             steps {
-                powershell 'npm test'
+                bat 'npm test -- --reporter mocha-multi-reporters --reporter-options configFile=config/test-reporter.json'
             }
         }
 
-        stage('Build') {
+        stage('Run Integration Tests') {
             steps {
-                echo 'Building the application...'
-                // Tambahkan perintah build jika diperlukan
+                bat 'npm run integration-test'
             }
         }
 
-        stage('Deploy') {
+        stage('Build Application') {
             steps {
-                echo 'Deploying the application...'
-                // Tambahkan perintah deploy jika diperlukan
+                bat 'npm run build'
+            }
+        }
+
+        stage('Deploy to Staging') {
+            when {
+                branch 'main'
+            }
+            steps {
+                bat 'npm run deploy-staging'
+            }
+        }
+
+        stage('Branch-Specific Tests') {
+            when {
+                expression {
+                    env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'main'
+                }
+            }
+            steps {
+                script {
+                    if (env.BRANCH_NAME == 'develop') {
+                        bat 'npm run test-develop'
+                    } else if (env.BRANCH_NAME == 'main') {
+                        bat 'npm run test-main'
+                    }
+                }
+            }
+        }
+
+        stage('Notify on Success') {
+            steps {
+                emailext subject: "Build Succeeded",
+                         body: "The build succeeded! View the logs for more details.",
+                         to: "dev-team@example.com"
+            }
+        }
+
+        stage('Notify on Failure') {
+            when {
+                expression {
+                    currentBuild.result == 'FAILURE'
+                }
+            }
+            steps {
+                emailext subject: "Build Failed",
+                         body: "The build failed. Please check the logs.",
+                         to: "dev-team@example.com"
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline finished successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
+        always {
+            cleanWs()
         }
     }
 }
