@@ -44,8 +44,8 @@ pipeline {
             steps {
                 script {
                     echo "Running Integration Tests"
-                    // Directly run the integration test using Jest for smtp-test.js
-                    bat 'npx jest smtp-test.js'  // Use `npx` to run Jest directly without relying on package.json scripts
+                    // Directly run the integration test using Jest for smtp-test.test.js
+                    bat 'npx jest smtp-test.test.js'  // Use the updated file name for the integration test
                 }
             }
         }
