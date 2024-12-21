@@ -34,17 +34,6 @@ pipeline {
             }
         }
 
-        stage('Verify package.json') {
-            steps {
-                script {
-                    // Ensure the npm scripts are present
-                    echo "Listing package.json"
-                    bat 'type package.json' // This will show the content of package.json
-                    bat 'npm run'            // This will list all npm scripts
-                }
-            }
-        }
-
         stage('Run Unit Tests') {
             steps {
                 bat 'npm test'  // Runs Jest without additional reporter options
@@ -55,8 +44,8 @@ pipeline {
             steps {
                 script {
                     echo "Running Integration Tests"
-                    // Run integration test using smtp-test.js
-                    bat 'npm run integration-test'  // Ensure the script points to smtp-test.js
+                    // Directly run the integration test using Jest for smtp-test.js
+                    bat 'npx jest smtp-test.js'  // Use `npx` to run Jest directly without relying on package.json scripts
                 }
             }
         }
