@@ -21,7 +21,7 @@ pipeline {
                         env.BRANCH_NAME = 'main'  // Default branch (change to your default branch if needed)
                     }
                     echo "Running on branch: ${env.BRANCH_NAME}"
-                    
+
                     // Checkout from the correct GitHub branch
                     git branch: "${env.BRANCH_NAME}", url: 'https://github.com/astisulistio/node-ci-cd.git'
                 }
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     echo "Running Integration Tests"
-                    // Make sure we are running the test from the tests folder
+                    // Make sure we are running the test from the correct path
                     bat 'npx jest tests/smtp-test.test.js --verbose --maxWorkers=2'  // Correct path to the test file
                 }
             }

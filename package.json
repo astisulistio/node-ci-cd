@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "integration-test": "jest ./smtp-test.test.js"
+    "integration-test": "jest tests/smtp-test.test.js"
   },
   "keywords": [],
   "author": "",
