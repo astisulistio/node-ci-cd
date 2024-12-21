@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",  
+    "test": "jest", 
     "integration-test": "jest ./smtp-test.test.js" 
   },
   "keywords": [],
@@ -21,7 +21,13 @@
   },
   "jest": {
     "testMatch": [
-      "**/?(*.)+(spec|test).[tj]s?(x)" 
+      "**/*.test.js", 
+      "**/?(*.)+(spec|test).[tj]s?(x)"  
+    ],
+    "testPathIgnorePatterns": [
+      "\\node_modules\\",  
+      "\\dist\\", 
+      "\\coverage\\"  
     ]
   }
 }
